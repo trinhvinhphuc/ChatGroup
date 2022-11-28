@@ -28,10 +28,10 @@ namespace GroupClient
 
             String loginJson = JsonSerializer.Serialize(login);
             Common.Json json = new Common.Json (1, loginJson);
-            sendJson(json);
+            sendJson(json, client);
             threadStart();
         }
-        private void sendJson(Common.Json json)
+        private void sendJson(Common.Json json, Socket client)
         {
             String message = JsonSerializer.Serialize(json);
             byte[] data = new byte[1024];
@@ -55,7 +55,7 @@ namespace GroupClient
             Common.Message messageJson = new Common.Message(usernameBox.Text, toBox.Text, messageBox.Text);
             String message = JsonSerializer.Serialize(messageJson);
             Common.Json stringJson = new Common.Json(4, message);
-            sendJson(stringJson);
+            sendJson(stringJson, client);
         }
         private void changeButtonEnable(Button btn, bool enable)
         {
@@ -69,7 +69,7 @@ namespace GroupClient
         {
             Common.Logout logout = new Common.Logout(usernameBox.Text);
             Common.Json json = new Common.Json(5, JsonSerializer.Serialize(logout));
-            sendJson(json);
+            sendJson(json, client);
         }
         private void signinButton_Click(object sender, EventArgs e)
         {
@@ -81,7 +81,7 @@ namespace GroupClient
 
             String loginJson = JsonSerializer.Serialize(login);
             Common.Json json = new Common.Json(6, loginJson);
-            sendJson(json);
+            sendJson(json, client);
             threadStart();            
         }
         private void cancelButton_Click(object sender, EventArgs e)
@@ -89,7 +89,7 @@ namespace GroupClient
             if ( client != null && ipe != null )
             {
                 Common.Json close = new Common.Json(10, "CLOSE");
-                sendJson(close);
+                sendJson(close, client);
             }
             
             active = false;
@@ -142,6 +142,8 @@ namespace GroupClient
                                         changeButtonEnable(signinButton, true);
                                         changeButtonEnable(logoutButton, false);
                                         active = false;
+                                        client.Shutdown(SocketShutdown.Both);
+                                        client.Close();
                                         break;
                                     case "LOGOUT FAILED":
                                         MessageBox.Show("Logout failed!!", "Notification");

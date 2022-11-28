@@ -179,7 +179,10 @@ namespace GroupServer
                                     Common.Json notification = new Common.Json(3, "LOGOUT SUCCESS");
                                     sendJson(notification, CLIENT[logout.username]);
                                     appendInTextBox(messagesBox, logout.username + " logged out!");
-                                    CLIENT.Remove(logout.username);
+                                    CLIENT.Remove(logout.username); 
+                                    client.Shutdown(SocketShutdown.Both);
+                                    client.Close();
+                                    threadActive = false;
                                 }
                                 else
                                 {
